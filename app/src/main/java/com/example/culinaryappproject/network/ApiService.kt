@@ -7,6 +7,7 @@
 
 package com.example.culinaryappproject.network
 
+import com.example.culinaryappproject.models.CategoriesResponse
 import com.example.culinaryappproject.models.RecipeDetailResponse
 import com.example.culinaryappproject.models.RecipeResponse
 import retrofit2.Call
@@ -24,4 +25,15 @@ interface ApiService {
     @Query("i") mealId: String - добавляет параметр i=mealId к URL (например, lookup.php?i=52772).
     Ответ приходит в виде RecipeDetailResponse (детали одного блюда)
     */
+
+    // категории
+    @GET("categories.php")
+    fun getCategories(): Call<CategoriesResponse>
+
+    // фильтрация
+    @GET("filter.php")
+    fun getRecipesByCategory(@Query("c") category: String): Call<RecipeResponse>
+
+    @GET("search.php")
+    fun searchMeals(@Query("s") searchQuery: String): Call<RecipeResponse>
 }
