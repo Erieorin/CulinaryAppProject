@@ -30,6 +30,9 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
     private val _categories = MutableLiveData<List<Category>>()
     val categories: LiveData<List<Category>> get() = _categories
 
+    private val _showRecipes = MutableLiveData<Boolean>(false)
+    val showRecipes: LiveData<Boolean> get() = _showRecipes
+
     companion object {
         private const val TAG = "RecipeViewModel"
     }
@@ -88,6 +91,7 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
 
     // вызывает рецепты по категориям
     fun fetchRecipesByCategory(category: String) {
+        _showRecipes.value = true
         ApiClient.apiService.getRecipesByCategory(category).enqueue(object : Callback<RecipeResponse> {
             override fun onResponse(call: Call<RecipeResponse>, response: Response<RecipeResponse>) {
                 if (response.isSuccessful) {
@@ -114,5 +118,10 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
                 Log.e(TAG, "Ошибка загрузки категорий: ${t.message}", t)
             }
         })
+    }
+
+    fun resetRecipes() {
+        _showRecipes.value = false
+        _recipes.value = emptyList()
     }
 }

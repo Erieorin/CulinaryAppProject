@@ -10,7 +10,7 @@
     android:background="@color/white"
     tools:context=".ui.home.MainActivity">
 
-    <!-- Добавляем SearchView -->
+    <!-- Поисковая строка -->
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
@@ -19,11 +19,30 @@
         android:queryHint="Поиск рецептов"
         android:iconifiedByDefault="false"/>
 
+    <!-- Horizontal RecyclerView для категорий -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/categoriesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        tools:listitem="@layout/item_category" />
+
+    <TextView
+        android:id="@+id/emptyStateText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:text="Выберите категорию или введите поисковый запрос"
+        android:visibility="visible" />
+
     <!-- Основной RecyclerView для рецептов -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_marginTop="8dp"
         android:padding="8dp"
         android:layout_weight="1"
@@ -36,5 +55,4 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:menu="@menu/bottom_nav" />
-
 </LinearLayout>

@@ -25,7 +25,14 @@
         </activity>
         <activity
             android:name=".ui.details.RecipeDetailActivity"
-            android:exported="false" />
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.CulinaryAppProject.NoActionBar"
+            android:exported="false"/>
+        <activity
+            android:name=".ui.search.SearchActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.CulinaryAppProject.NoActionBar"
+            android:exported="false"/>
     </application>
 
 </manifest>

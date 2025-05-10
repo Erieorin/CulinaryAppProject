@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".ui.details.RecipeDetailActivity">
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_nav"
+        android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -73,6 +78,16 @@
             android:layout_marginTop="16dp"
             android:text="Ingredients" />
 
-    </LinearLayout>
 
-</ScrollView>
+    </LinearLayout>
+    </ScrollView>
+
+    <!-- BottomNavigationView прижат к низу экрана -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+    android:id="@+id/bottom_nav"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    app:menu="@menu/bottom_nav" />
+
+</RelativeLayout>
