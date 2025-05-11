@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFDFD1"
     android:orientation="vertical"
-    android:background="@color/white"
     tools:context=".ui.home.MainActivity">
 
     <!-- Поисковая строка -->
@@ -16,8 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:queryHint="Поиск рецептов"
-        android:iconifiedByDefault="false"/>
+        android:iconifiedByDefault="false"
+        android:queryHint="Поиск рецептов" />
 
     <!-- Horizontal RecyclerView для категорий -->
     <androidx.recyclerview.widget.RecyclerView
@@ -25,16 +24,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:padding="8dp"
         android:clipToPadding="false"
+        android:padding="8dp"
         tools:listitem="@layout/item_category" />
 
     <TextView
         android:id="@+id/emptyStateText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
         android:layout_weight="1"
+        android:gravity="center"
         android:text="Выберите категорию или введите поисковый запрос"
         android:visibility="visible" />
 
@@ -44,8 +43,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="8dp"
-        android:padding="8dp"
         android:layout_weight="1"
+        android:padding="8dp"
         tools:listitem="@layout/list_item" />
 
     <!-- Нижняя навигация -->
