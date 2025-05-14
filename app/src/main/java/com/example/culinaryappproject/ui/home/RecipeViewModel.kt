@@ -124,4 +124,8 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
         _showRecipes.value = false
         _recipes.value = emptyList()
     }
+
+    fun getRandomRecipe(): Meal? {
+        return _allRecipes.randomOrNull()
+    }
 }

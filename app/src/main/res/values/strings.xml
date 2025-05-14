@@ -10,4 +10,9 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+
+    <string name="notification_channel_name">Recipe notifications</string>
+    <string name="notification_channel_description">Daily recipe suggestions</string>
+    <string name="notification_title">Рецепт дня!</string>
+    <string name="notification_message">Попробуйте: %s</string>
 </resources>
