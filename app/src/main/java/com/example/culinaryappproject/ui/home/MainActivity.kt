@@ -19,6 +19,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.example.culinaryappproject.ui.search.SearchActivity
 import com.example.culinaryappproject.receivers.RecipeNotificationReceiver
 import java.util.Calendar
+import com.example.culinaryappproject.models.User
+import com.example.culinaryappproject.models.Review
+import com.example.culinaryappproject.models.FirestoreRepository
+import com.google.firebase.FirebaseApp
+import android.util.Log
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +34,25 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
+        FirebaseApp.initializeApp(this)
+        //Firestore: пользователь и отзыв
+        val user = User(
+            id = "abc123",
+            name = "Иван",
+            email = "ivan@example.com"
+        )
+
+        val review = Review(
+            id = "rev123",
+            userId = user.id,
+            recipeId = "52772",
+            text = "Вкусно!",
+            rating = 5
+        )
+        Log.d("FirestoreTest", "Попытка сохранить пользователя и отзыв")
+        FirestoreRepository.saveUser(user)
+        FirestoreRepository.saveReview(review)
 
         // Инициализация RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
