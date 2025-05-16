@@ -21,8 +21,11 @@ import com.example.culinaryappproject.receivers.RecipeNotificationReceiver
 import java.util.Calendar
 import com.example.culinaryappproject.models.User
 import com.example.culinaryappproject.models.Review
+import com.example.culinaryappproject.models.Recipe
+import com.example.culinaryappproject.models.Step
 import com.example.culinaryappproject.models.FirestoreRepository
 import com.example.culinaryappproject.ui.register.RegisterActivity
+
 import com.google.firebase.FirebaseApp
 import android.util.Log
 
@@ -52,6 +55,47 @@ class MainActivity : AppCompatActivity() {
             rating = 5
         )
         Log.d("FirestoreTest", "Попытка сохранить пользователя и отзыв")
+
+        val recipe = Recipe(
+            id = "rec456",
+            userId = user.id,
+            title = "Чахохбили по-грузински",
+            photoUrl = "https://example.com/images/chakhokhbili.jpg",
+            cookingTime = 90,
+            averageRating = 4.6,
+            servings = 4,
+            cuisine = "Грузинская",
+            tags = listOf("острое", "тушёное", "курица"),
+            ingredients = listOf(
+                "1 кг курицы",
+                "2 луковицы",
+                "3 помидора"
+            ),
+            steps = listOf(
+                Step(
+                    title = "Этап 1",
+                    description = "Нарезать курицу и обжарить.",
+                    duration = 15
+                ),
+                Step(
+                    title = "Этап 2",
+                    description = "Добавить лук, тушить 10 минут.",
+                    duration = 10
+                )
+            ),
+            reviews = listOf(
+                Review(
+                    userId = "user_xyz789",
+                    rating = 5,
+                    text = "Очень вкусно!",
+                )
+            )
+        )
+
+
+        FirestoreRepository.saveRecipe(recipe)
+
+
         FirestoreRepository.saveUser(user)
         FirestoreRepository.saveReview(review)
 
