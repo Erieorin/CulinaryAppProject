@@ -17,6 +17,8 @@ import android.content.Intent
 import android.view.View
 import android.widget.TextView
 import com.example.culinaryappproject.ui.home.MainActivity
+import com.example.culinaryappproject.ui.register.RegisterActivity
+
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView // отображает список рецептов в виде сетки (2 колонки)
@@ -103,7 +105,13 @@ class SearchActivity : AppCompatActivity() {
                     finish()
                     true
                 }
+
                 R.id.nav_search -> {
+                    true
+                }
+
+                R.id.navigation_register -> {
+                    startActivity(Intent(this, RegisterActivity::class.java))
                     true
                 }
                 else -> false

@@ -22,6 +22,7 @@ import java.util.Calendar
 import com.example.culinaryappproject.models.User
 import com.example.culinaryappproject.models.Review
 import com.example.culinaryappproject.models.FirestoreRepository
+import com.example.culinaryappproject.ui.register.RegisterActivity
 import com.google.firebase.FirebaseApp
 import android.util.Log
 
@@ -91,10 +92,15 @@ class MainActivity : AppCompatActivity() {
                     finish()
                     true
                 }
+                R.id.navigation_register -> {
+                    startActivity(Intent(this, RegisterActivity::class.java))
+                    true
+                }
                 else -> false
             }
         }
         bottomNav.selectedItemId = R.id.nav_home
+
 
         // Проверка и запрос разрешений для уведомлений (Android 13+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

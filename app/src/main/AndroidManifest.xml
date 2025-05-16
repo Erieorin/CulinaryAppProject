@@ -37,6 +37,7 @@
             android:launchMode="singleTop"
             android:theme="@style/Theme.CulinaryAppProject.NoActionBar"
             android:exported="false"/>
+        <activity android:name=".ui.register.RegisterActivity" />
         <receiver
             android:name=".receivers.RecipeNotificationReceiver"
             android:exported="false"

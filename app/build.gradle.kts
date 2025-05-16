@@ -6,6 +6,13 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+buildscript {
+    dependencies {
+        classpath("com.google.gms:google-services:4.3.15")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.50")
+    }
+}
+
 android {
     namespace = "com.example.culinaryappproject"
     compileSdk = 35
@@ -59,12 +66,14 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation ("com.google.android.material:material:1.6.0")
+
+    //register
+    implementation ("com.google.dagger:hilt-android:2.48")
+
     //firebase
     implementation("com.google.firebase:firebase-firestore-ktx:24.10.3")
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-
 }
