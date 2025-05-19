@@ -22,8 +22,10 @@ class RecipeNotificationReceiver : BroadcastReceiver() {
         val randomRecipe = viewModel.getRandomRecipe()
 
         // Показываем уведомление
+        /*
         randomRecipe?.let {
             NotificationHelper(context).showDailyRecipeNotification(it.strMeal)
         }
+        */
     }
 }

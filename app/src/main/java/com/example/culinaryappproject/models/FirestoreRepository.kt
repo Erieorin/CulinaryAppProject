@@ -31,4 +31,40 @@ object FirestoreRepository {
                 Log.e("Firestore", "Error saving review: $e")
             }
     }
+
+    //сохранение рецетов
+    fun saveRecipe(recipe: Recipe) {
+        db.collection("recipes")
+            .document(recipe.id)
+            .set(recipe)
+            .addOnSuccessListener { Log.d("Firestore", "Recipe saved") }
+            .addOnFailureListener { e -> Log.e("Firestore", "Error saving recipe", e) }
+    }
+
+    //отображение рецептов из собственной бд
+    fun getRecipesFromFirestore(onResult: (List<Recipe>) -> Unit) {
+        db.collection("recipes")
+            .get()
+            .addOnSuccessListener { result ->
+                val recipes = result.documents.mapNotNull { it.toObject(Recipe::class.java) }
+                onResult(recipes)
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Ошибка при загрузке рецептов", e)
+                onResult(emptyList())
+            }
+    }
+
+    fun getRecipeById(recipeId: String, callback: (Recipe?) -> Unit) {
+        db.collection("recipes")
+            .document(recipeId)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val recipe = snapshot.toObject(Recipe::class.java)
+                callback(recipe)
+            }
+            .addOnFailureListener {
+                callback(null)
+            }
+    }
 }

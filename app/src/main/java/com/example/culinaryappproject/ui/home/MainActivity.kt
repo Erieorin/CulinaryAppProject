@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         val recipe = Recipe(
             id = "rec456",
             userId = user.id,
-            title = "Чахохбили по-грузински",
+            title = "Chahobili по-грузински",
             photoUrl = "https://example.com/images/chakhokhbili.jpg",
             cookingTime = 90,
             averageRating = 4.6,
@@ -94,8 +94,6 @@ class MainActivity : AppCompatActivity() {
 
 
         FirestoreRepository.saveRecipe(recipe)
-
-
         FirestoreRepository.saveUser(user)
         FirestoreRepository.saveReview(review)
 
@@ -103,13 +101,19 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = GridLayoutManager(this, 2)
 
-        // Наблюдение за данными рецептов
+        /* Наблюдение за данными рецептов
         recipeViewModel.recipes.observe(this) { meals ->
             val adapter = RecipeAdapter(this@MainActivity, meals)
             recyclerView.adapter = adapter
         }
-
-        recipeViewModel.fetchRecipes()
+        */
+        recipeViewModel.recipes.observe(this) { recipes ->
+            val adapter = RecipeAdapter(this@MainActivity, recipes)
+            recyclerView.adapter = adapter
+        }
+        //recipeViewModel.fetchRecipes()
+        //recipeViewModel.fetchRecipesFromFirestore()
+        recipeViewModel.fetchCombinedRecipes()
 
         // Поиск
         val searchView = findViewById<SearchView>(R.id.searchView)
