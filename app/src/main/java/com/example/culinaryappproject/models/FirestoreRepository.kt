@@ -4,6 +4,10 @@ import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
+import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
+
 object FirestoreRepository {
 
     private val db = Firebase.firestore
@@ -66,5 +70,17 @@ object FirestoreRepository {
             .addOnFailureListener {
                 callback(null)
             }
+    }
+
+    suspend fun getRandomRecipe(): Recipe? {
+        return try {
+            val querySnapshot = Firebase.firestore.collection("recipes").get().await()
+            val recipes = querySnapshot.documents.mapNotNull { document ->
+                document.toObject(Recipe::class.java)?.copy(id = document.id)
+            }
+            recipes.randomOrNull()
+        } catch (e: Exception) {
+            null
+        }
     }
 }

@@ -167,17 +167,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupDailyNotification() {
-        // Проверка разрешения для точных алермов (Android 12+)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            if (!alarmManager.canScheduleExactAlarms()) {
-                // Запросить разрешение
-                val intent = Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
-                startActivity(intent)
-                return
-            }
-        }
-
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, RecipeNotificationReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
@@ -188,24 +177,23 @@ class MainActivity : AppCompatActivity() {
         )
 
         // Устанавливаем на 10:00 утра
-        val calendar = Calendar.getInstance().apply {
+        Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
             set(Calendar.HOUR_OF_DAY, 10)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
 
-            // Если уже 10:00, устанавливаем на завтра
             if (timeInMillis < System.currentTimeMillis()) {
                 add(Calendar.DAY_OF_YEAR, 1)
             }
-        }
 
-        alarmManager.setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            AlarmManager.INTERVAL_DAY,
-            pendingIntent
-        )
+            alarmManager.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                timeInMillis,
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent
+            )
+        }
     }
 
     override fun onRequestPermissionsResult(
