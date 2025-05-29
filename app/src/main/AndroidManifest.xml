@@ -14,7 +14,7 @@
         android:label="PickMeLunch"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CulinaryAppProject"
+        android:theme="@style/Theme.CulinaryAppProject.NoActionBar"
         tools:targetApi="31">
         <activity
             android:name=".ui.home.MainActivity"
@@ -38,6 +38,9 @@
             android:theme="@style/Theme.CulinaryAppProject.NoActionBar"
             android:exported="false"/>
         <activity android:name=".ui.register.RegisterActivity" />
+        <activity
+            android:name=".ui.favorites.FavoritesActivity"
+            android:exported="false" />
         <receiver
             android:name=".receivers.RecipeNotificationReceiver"
             android:exported="false"

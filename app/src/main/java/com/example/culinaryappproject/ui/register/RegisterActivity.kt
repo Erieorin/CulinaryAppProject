@@ -7,6 +7,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.culinaryappproject.R
 import com.example.culinaryappproject.models.User
+import com.example.culinaryappproject.ui.favorites.FavoritesActivity
 import com.example.culinaryappproject.ui.home.MainActivity
 import com.example.culinaryappproject.ui.search.SearchActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -61,18 +62,27 @@ class RegisterActivity : AppCompatActivity() {
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
         bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
+            when(item.itemId) {
                 R.id.nav_home -> {
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                     true
                 }
                 R.id.nav_search -> {
-                    startActivity(Intent(this, SearchActivity::class.java))
+                    startActivity(Intent(this, SearchActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                    })
                     finish()
                     true
                 }
-                R.id.navigation_register -> true // мы уже тут
+                R.id.nav_favorites -> {
+                    startActivity(Intent(this, FavoritesActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                    })
+                    finish()
+                    true
+                }
+                R.id.navigation_register -> true
                 else -> false
             }
         }

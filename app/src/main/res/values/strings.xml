@@ -15,4 +15,5 @@
     <string name="notification_channel_description">Daily recipe suggestions</string>
     <string name="notification_title">Рецепт дня!</string>
     <string name="notification_message">Попробуйте: %s</string>
+    <string name="favorite_icon">Favorite</string>
 </resources>

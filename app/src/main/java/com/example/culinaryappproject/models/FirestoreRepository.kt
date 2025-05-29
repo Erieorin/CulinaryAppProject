@@ -83,4 +83,56 @@ object FirestoreRepository {
             null
         }
     }
+
+    // избранное
+    private const val FAVORITES_COLLECTION = "favorites"
+
+    fun addToFavorites(userId: String, recipeId: String, onComplete: (Boolean) -> Unit) {
+        val favorite = FavoriteRecipe(userId = userId, recipeId = recipeId)
+
+        db.collection(FAVORITES_COLLECTION)
+            .document("${userId}_${recipeId}") // id для связи пользователь-рецепт
+            .set(favorite)
+            .addOnSuccessListener {
+                onComplete(true)
+            }
+            .addOnFailureListener {
+                onComplete(false)
+            }
+    }
+
+    fun removeFromFavorites(userId: String, recipeId: String, onComplete: (Boolean) -> Unit) {
+        db.collection(FAVORITES_COLLECTION)
+            .document("${userId}_${recipeId}")
+            .delete()
+            .addOnSuccessListener {
+                onComplete(true)
+            }
+            .addOnFailureListener {
+                onComplete(false)
+            }
+    }
+    fun checkIfFavorite(userId: String, recipeId: String, onComplete: (Boolean) -> Unit) {
+        db.collection(FAVORITES_COLLECTION)
+            .document("${userId}_${recipeId}")
+            .get()
+            .addOnSuccessListener { document ->
+                onComplete(document.exists())
+            }
+            .addOnFailureListener {
+                onComplete(false)
+            }
+    }
+    fun getFavoriteRecipes(userId: String, onComplete: (List<String>) -> Unit) {
+        db.collection(FAVORITES_COLLECTION)
+            .whereEqualTo("userId", userId)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val recipeIds = querySnapshot.documents.map { it.getString("recipeId") ?: "" }
+                onComplete(recipeIds)
+            }
+            .addOnFailureListener {
+                onComplete(emptyList())
+            }
+    }
 }

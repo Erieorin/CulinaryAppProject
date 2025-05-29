@@ -13,6 +13,7 @@ data class Recipe(
     val ingredients: List<String> = emptyList(), //список ингредиентов (просто строками)
 
     val steps: List<Step> = emptyList(), //этапы приготовления
-    val reviews: List<Review> = emptyList() //отзывы к рецепту
+    val reviews: List<Review> = emptyList(), //отзывы к рецепту
+    var isFavorite: Boolean = false
 )
 

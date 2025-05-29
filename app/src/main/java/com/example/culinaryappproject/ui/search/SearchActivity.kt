@@ -16,6 +16,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.content.Intent
 import android.view.View
 import android.widget.TextView
+import com.example.culinaryappproject.ui.favorites.FavoritesActivity
 import com.example.culinaryappproject.ui.home.MainActivity
 import com.example.culinaryappproject.ui.register.RegisterActivity
 
@@ -72,7 +73,8 @@ class SearchActivity : AppCompatActivity() {
 
         // наблюдение за данными: когда recipes в ViewModel обновляются, RecyclerView автоматически получает новые данные
         recipeViewModel.recipes.observe(this) { meals ->
-            val adapter = RecipeAdapter(this@SearchActivity, meals) // адаптер для преобразования данных рецептов в элементы RecyclerView
+            val userId = "user123" // TODO: замените на реальный ID пользователя (из SharedPreferences или Firebase Auth)
+            val adapter = RecipeAdapter(this@SearchActivity, meals, userId) // адаптер для преобразования данных рецептов в элементы RecyclerView
             recyclerView.layoutManager = GridLayoutManager(this@SearchActivity, 2) // GridLayoutManager размещает элементы в сетке
             recyclerView.adapter = adapter
         }
@@ -107,6 +109,14 @@ class SearchActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_search -> {
+                    true
+                }
+
+                R.id.nav_favorites -> {
+                    startActivity(Intent(this, FavoritesActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                    })
+                    finish()
                     true
                 }
 

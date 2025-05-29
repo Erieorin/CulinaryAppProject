@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.CulinaryAppProject" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.CulinaryAppProject" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -20,6 +20,5 @@
     </style>
 
     <style name="Theme.CulinaryAppProject.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
     <style name="Theme.CulinaryAppProject.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

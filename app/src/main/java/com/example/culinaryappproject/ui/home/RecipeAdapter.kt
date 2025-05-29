@@ -22,53 +22,25 @@ import com.bumptech.glide.Glide
 import com.example.culinaryappproject.R
 import com.example.culinaryappproject.ui.details.RecipeDetailActivity
 import com.example.culinaryappproject.models.Meal
-/*
+import com.example.culinaryappproject.models.FirestoreRepository
+
 class RecipeAdapter(
     private val context: Context,
-    private val meals: List<Meal>
-) : RecyclerView.Adapter<RecipeAdapter.ViewHolder>() {
-    // внутренний класс, который хранит ссылки на элементы UI
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageView: ImageView = itemView.findViewById(R.id.mealImage)
-        val textView: TextView = itemView.findViewById(R.id.mealName)
-    }
-
-    // создает новый ViewHolder и надувает (создает) макет (list_item.xml)
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.list_item, parent, false)
-
-        return ViewHolder(view)
-    }
-
-    // заполняет элементы данными из meals и обрабатывает клики
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = meals[position]
-
-        // загрузка изображения с помощью Glide
-        Glide.with(context).load(item.strMealThumb).into(holder.imageView)
-        holder.textView.text = item.strMeal // установка названия рецепта
-
-        // обработка клика, при клике на элемент открывается RecipeDetailActivity с передачей idMeal
-        holder.itemView.setOnClickListener {
-            val intent = Intent(context, RecipeDetailActivity::class.java)
-            intent.putExtra("MEAL_ID", item.idMeal)
-            context.startActivity(intent)
-        }
-    }
-
-    // возвращает общее количество элементов
-    override fun getItemCount(): Int = meals.size
-}
-*/
-class RecipeAdapter(
-    private val context: Context,
-    private val recipes: List<Recipe>
+    private var recipes: List<Recipe>,
+    private val userId: String
 ) : RecyclerView.Adapter<RecipeAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.mealImage)
         val textView: TextView = view.findViewById(R.id.mealName)
+        val favoriteIcon: ImageView = view.findViewById(R.id.favoriteIcon)
+
+        fun updateFavoriteIcon(isFavorite: Boolean) {
+            favoriteIcon.setImageResource(
+                if (isFavorite) R.drawable.ic_favorite_filled
+                else R.drawable.ic_favorite_border
+            )
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -82,16 +54,42 @@ class RecipeAdapter(
 
         Glide.with(context).load(item.photoUrl).into(holder.imageView)
         holder.textView.text = item.title
+        holder.updateFavoriteIcon(item.isFavorite)
+
+        // обработчик для иконки избранного
+        holder.favoriteIcon.setOnClickListener {
+            val newFavoriteState = !item.isFavorite
+            item.isFavorite = newFavoriteState
+            holder.updateFavoriteIcon(newFavoriteState)
+
+            if (newFavoriteState) {
+                FirestoreRepository.addToFavorites(userId, item.id) { success ->
+                    if (!success) {
+                        item.isFavorite = false
+                        notifyItemChanged(position)
+                    }
+                }
+            } else {
+                FirestoreRepository.removeFromFavorites(userId, item.id) { success ->
+                    if (!success) {
+                        item.isFavorite = true
+                        notifyItemChanged(position)
+                    }
+                }
+            }
+        }
 
         holder.itemView.setOnClickListener {
             val intent = Intent(context, RecipeDetailActivity::class.java)
-            intent.putExtra("RECIPE_ID", item.id) // ключ сменился с "MEAL_ID" на "RECIPE_ID"
+            intent.putExtra("RECIPE_ID", item.id)
             context.startActivity(intent)
         }
     }
 
     override fun getItemCount(): Int = recipes.size
-}
 
-/* В контексте Android-разработки слово «надувает» (от англ. inflate) — это жаргонный термин,
- который означает процесс создания объекта View из XML-макета */
+    fun updateRecipes(newRecipes: List<Recipe>) {
+        this.recipes = newRecipes
+        notifyDataSetChanged()
+    }
+}

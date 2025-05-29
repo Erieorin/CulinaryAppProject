@@ -25,6 +25,8 @@ import com.example.culinaryappproject.models.Recipe
 import com.example.culinaryappproject.models.Step
 import com.example.culinaryappproject.models.FirestoreRepository
 import com.example.culinaryappproject.ui.register.RegisterActivity
+import com.example.culinaryappproject.ui.favorites.FavoritesActivity
+
 
 import com.google.firebase.FirebaseApp
 import android.util.Log
@@ -59,8 +61,8 @@ class MainActivity : AppCompatActivity() {
         val recipe = Recipe(
             id = "rec456",
             userId = user.id,
-            title = "Chahobili по-грузински",
-            photoUrl = "https://example.com/images/chakhokhbili.jpg",
+            title = "Чахохбили по-грузински",
+            photoUrl = "https://eda.ru/images/RecipePhoto/1920x1440/chahohbili-iz-kuricy-po-gruzinski_92708_photo_122515.webp",
             cookingTime = 90,
             averageRating = 4.6,
             servings = 4,
@@ -108,8 +110,17 @@ class MainActivity : AppCompatActivity() {
         }
         */
         recipeViewModel.recipes.observe(this) { recipes ->
-            val adapter = RecipeAdapter(this@MainActivity, recipes)
+            val userId = user.id
+            val adapter = RecipeAdapter(this@MainActivity, recipes, userId)
             recyclerView.adapter = adapter
+
+            // проверяем статус избранного для каждого рецепта
+            recipes.forEach { recipe ->
+                FirestoreRepository.checkIfFavorite(userId, recipe.id) { isFavorite ->
+                    recipe.isFavorite = isFavorite
+                    adapter.notifyDataSetChanged()
+                }
+            }
         }
         //recipeViewModel.fetchRecipes()
         //recipeViewModel.fetchRecipesFromFirestore()
@@ -135,6 +146,13 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_home -> true
                 R.id.nav_search -> {
                     startActivity(Intent(this, SearchActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                    })
+                    finish()
+                    true
+                }
+                R.id.nav_favorites -> {
+                    startActivity(Intent(this, FavoritesActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                     })
                     finish()
