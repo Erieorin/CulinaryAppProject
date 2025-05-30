@@ -25,8 +25,9 @@ import com.example.culinaryappproject.models.Recipe
 import com.example.culinaryappproject.models.Step
 import com.example.culinaryappproject.models.FirestoreRepository
 import com.example.culinaryappproject.ui.register.RegisterActivity
+import com.example.culinaryappproject.ui.profile.ProfileActivity
 import com.example.culinaryappproject.ui.favorites.FavoritesActivity
-
+import com.google.firebase.auth.FirebaseAuth
 
 import com.google.firebase.FirebaseApp
 import android.util.Log
@@ -183,6 +184,7 @@ class MainActivity : AppCompatActivity() {
         // Настройка ежедневных уведомлений
         setupDailyNotification()
     }
+
 
     private fun setupDailyNotification() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager

@@ -28,6 +28,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CulinaryAppProject.NoActionBar" />
+        <activity
             android:name=".ui.details.RecipeDetailActivity"
             android:launchMode="singleTop"
             android:theme="@style/Theme.CulinaryAppProject.NoActionBar"
