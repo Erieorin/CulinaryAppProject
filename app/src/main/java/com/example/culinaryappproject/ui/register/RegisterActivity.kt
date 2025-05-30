@@ -15,6 +15,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.example.culinaryappproject.ui.login.LoginActivity
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -22,6 +23,12 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
         setContentView(R.layout.activity_register)
 
         auth = FirebaseAuth.getInstance()
@@ -31,6 +38,7 @@ class RegisterActivity : AppCompatActivity() {
         val etEmail = findViewById<EditText>(R.id.etEmail)
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val btnRegister = findViewById<Button>(R.id.btnRegister)
+        val btnLogin = findViewById<Button>(R.id.btnLogin)
 
         btnRegister.setOnClickListener {
             val name = etName.text.toString().trim()
@@ -76,6 +84,12 @@ class RegisterActivity : AppCompatActivity() {
                         Toast.makeText(this, "Ошибка: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                     }
                 }
+        }
+
+        btnLogin.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
         }
 
         // Нижняя навигация
