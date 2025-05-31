@@ -25,67 +25,209 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="24dp"
+                app:cardCornerRadius="0dp"
                 app:cardElevation="5dp">
 
-                <ImageView
-                    android:id="@+id/recipeImage"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:backgroundTint="#88000000"
-                    android:backgroundTintMode="src_over"
-                    android:contentDescription="Recipe Image"
-                    android:scaleType="centerCrop" />
+                    android:layout_height="250dp">
 
-                <TextView
-                    android:id="@+id/recipeName"
-                    android:layout_width="318dp"
-                    android:layout_height="77dp"
-                    android:layout_marginStart="30px"
-                    android:layout_marginTop="430px"
-                    android:backgroundTint="#C6C4C4"
-                    android:gravity="bottom|center|left"
-                    android:text="Recipe Name"
-                    android:textColor="@color/white"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    <ImageView
+                        android:id="@+id/recipeImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Recipe Image"
+                        android:scaleType="centerCrop" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/gradient_overlay" />
+
+                    <TextView
+                        android:id="@+id/backButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        android:text="Назад"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:background="@android:color/transparent"
+                        android:padding="4dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_gravity="top|start" />
+
+                    <ImageView
+                        android:id="@+id/favoriteIcon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="top|end"
+                        android:layout_margin="16dp"
+                        android:src="@drawable/ic_favorite_border_white"
+                        android:contentDescription="Favorite Icon"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+
+                    <TextView
+                        android:id="@+id/recipeName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:padding="16dp"
+                        android:fontFamily="@font/bookerly"
+                        android:text="Recipe Name"
+                        android:textColor="@android:color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                </FrameLayout>
 
             </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Instructions"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/recipeInstructions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Instructions"
-                android:textSize="16sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Ingredients"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+            <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_linear_bg"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:paddingTop="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginHorizontal="4dp"
+            android:clipToOutline="true">
 
             <TextView
                 android:id="@+id/recipeIngredients"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="0dp"
                 android:text="Ingredients"
                 android:textSize="16sp" />
 
+            <LinearLayout
+                android:id="@+id/instructionsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"> <!--visible-->
 
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/toggleStepsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="16dp"
+                android:text="Показать этапы"
+                android:textColor="#848484"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:focusable="true"
+                android:textSize="14sp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/reviewsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_linear_bg"
+                android:elevation="4dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginHorizontal="4dp"
+                android:clipToOutline="true">
+
+                <!-- Заголовок "Отзывы" -->
+                <TextView
+                    android:id="@+id/reviewsTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Отзывы"
+                    android:fontFamily="@font/bookerly"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Пример одного отзыва -->
+                <LinearLayout
+                    android:id="@+id/reviewItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <!-- Имя пользователя и звезды -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/reviewUsername"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Пользователь123"
+                            android:textColor="#000000"
+                            android:textSize="14sp"
+                            android:textStyle="normal" />
+
+                        <LinearLayout
+                            android:id="@+id/reviewStarsContainer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <!-- Звезды -->
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_star_filled" />
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_star_filled" />
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_star_filled" />
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_star_border" />
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_star_border" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/reviewText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Отличный рецепт! Делала уже 3 раза, очень понравился всей семье!"
+                        android:textColor="#000000"
+                        android:textSize="14sp"
+                        android:layout_marginTop="10dp" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
+
+
+
     </ScrollView>
 
     <!-- BottomNavigationView прижат к низу экрана -->

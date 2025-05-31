@@ -64,7 +64,7 @@ object FirestoreRepository {
             .document(recipeId)
             .get()
             .addOnSuccessListener { snapshot ->
-                val recipe = snapshot.toObject(Recipe::class.java)
+                val recipe = snapshot.toObject(Recipe::class.java)?.copy(id = snapshot.id)
                 callback(recipe)
             }
             .addOnFailureListener {
@@ -135,4 +135,62 @@ object FirestoreRepository {
                 onComplete(emptyList())
             }
     }
+
+    fun getReviewsWithUserNames(
+        recipeId: String,
+        callback: (List<Pair<String, Review>>) -> Unit
+    ) {
+        val recipeRef = db.collection("recipes").document(recipeId)
+
+        recipeRef.get().addOnSuccessListener { recipeDoc ->
+            val rawReviews = recipeDoc.get("reviews") as? List<Map<String, Any>> ?: emptyList()
+            val resultList = mutableListOf<Pair<String, Review>>()
+
+            if (rawReviews.isEmpty()) {
+                callback(emptyList())
+                return@addOnSuccessListener
+            }
+
+            var processed = 0
+            for (reviewMap in rawReviews) {
+                val review = Review(
+                    id = reviewMap["id"] as? String ?: "",
+                    userId = reviewMap["userId"] as? String ?: "",
+                    recipeId = reviewMap["recipeId"] as? String ?: "",
+                    text = reviewMap["text"] as? String ?: "",
+                    rating = (reviewMap["rating"] as? Number)?.toInt() ?: 0
+                )
+
+                if (review.userId.isNotEmpty()) {
+                    db.collection("users").document(review.userId).get()
+                        .addOnSuccessListener { userDoc ->
+                            val name = userDoc.getString("name") ?: "Аноним"
+                            resultList.add(name to review)
+                            processed++
+                            if (processed == rawReviews.size) {
+                                callback(resultList)
+                            }
+                        }
+                        .addOnFailureListener {
+                            resultList.add("Аноним" to review)
+                            processed++
+                            if (processed == rawReviews.size) {
+                                callback(resultList)
+                            }
+                        }
+                } else {
+                    resultList.add("Аноним" to review)
+                    processed++
+                    if (processed == rawReviews.size) {
+                        callback(resultList)
+                    }
+                }
+            }
+        }.addOnFailureListener {
+            callback(emptyList())
+        }
+    }
+
+
+
 }

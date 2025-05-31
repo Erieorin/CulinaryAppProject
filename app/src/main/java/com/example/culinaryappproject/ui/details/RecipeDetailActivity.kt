@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -19,9 +20,11 @@ import com.example.culinaryappproject.models.MealDetail
 import com.example.culinaryappproject.ui.home.MainActivity
 import com.example.culinaryappproject.ui.search.SearchActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
+import androidx.core.content.res.ResourcesCompat
 import com.example.culinaryappproject.models.FirestoreRepository
 import com.example.culinaryappproject.models.Recipe
+import com.example.culinaryappproject.models.Review
+
 
 
 class RecipeDetailActivity : AppCompatActivity() {
@@ -31,6 +34,11 @@ class RecipeDetailActivity : AppCompatActivity() {
     private lateinit var recipeInstructions: TextView
     private lateinit var recipeIngredients: TextView
 
+    private lateinit var instructionsContainer: LinearLayout
+    private lateinit var reviewsContainer: LinearLayout
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -38,8 +46,11 @@ class RecipeDetailActivity : AppCompatActivity() {
 
         recipeImage = findViewById(R.id.recipeImage)
         recipeName = findViewById(R.id.recipeName)
-        recipeInstructions = findViewById(R.id.recipeInstructions)
         recipeIngredients = findViewById(R.id.recipeIngredients)
+        instructionsContainer = findViewById(R.id.instructionsContainer)
+        reviewsContainer = findViewById(R.id.reviewsContainer)
+
+
 
         val recipeId = intent.getStringExtra("RECIPE_ID")
 
@@ -57,7 +68,17 @@ class RecipeDetailActivity : AppCompatActivity() {
             }
 
             bindRecipeData(recipe)
+
+            // теперь вызываем getReviews после получения recipe
+            FirestoreRepository.getReviewsWithUserNames(recipe.id) { reviewsWithUsers ->
+                runOnUiThread {
+                    bindReviews(reviewsWithUsers)
+                }
+            }
         }
+
+
+
 
         // Нижняя навигация
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
@@ -82,7 +103,6 @@ class RecipeDetailActivity : AppCompatActivity() {
                 else -> false
             }
         }
-
         val transparentStates = ColorStateList(
             arrayOf(
                 intArrayOf(android.R.attr.state_checked),
@@ -92,14 +112,168 @@ class RecipeDetailActivity : AppCompatActivity() {
         )
         bottomNav.itemIconTintList = transparentStates
         bottomNav.itemTextColor = transparentStates
+
+        val toggleButton = findViewById<TextView>(R.id.toggleStepsButton)
+        val instructionsContainer = findViewById<View>(R.id.instructionsContainer)
+
+        toggleButton.setOnClickListener {
+            val isVisible = instructionsContainer.visibility == View.VISIBLE
+
+            if (isVisible) {
+                instructionsContainer.visibility = View.GONE
+                toggleButton.text = "Показать этапы"
+                toggleButton.paintFlags = toggleButton.paintFlags or android.graphics.Paint.UNDERLINE_TEXT_FLAG
+            } else {
+                instructionsContainer.visibility = View.VISIBLE
+                toggleButton.text = "Скрыть этапы"
+                toggleButton.paintFlags = toggleButton.paintFlags and android.graphics.Paint.UNDERLINE_TEXT_FLAG.inv()
+            }
+        }
+
+        val favoriteIcon = findViewById<ImageView>(R.id.favoriteIcon)
+        var isFavorite = false
+        val userId = "abc123"
+
+        FirestoreRepository.getFavoriteRecipes(userId) { favorites ->
+            isFavorite = favorites.contains(recipeId)
+            favoriteIcon.setImageResource(
+                if (isFavorite) R.drawable.ic_favorite_filled_white
+                else R.drawable.ic_favorite_border_white
+            )
+        }
+
+        favoriteIcon.setOnClickListener {
+            isFavorite = !isFavorite
+
+            favoriteIcon.setImageResource(
+                if (isFavorite) R.drawable.ic_favorite_filled_white
+                else R.drawable.ic_favorite_border_white
+            )
+
+            if (isFavorite) {
+                FirestoreRepository.addToFavorites(userId, recipeId) { success ->
+                    if (success) {
+                        Toast.makeText(this, "Добавлено в избранное", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Ошибка при добавлении", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                FirestoreRepository.removeFromFavorites(userId, recipeId) { success ->
+                    if (success) {
+                        Toast.makeText(this, "Удалено из избранного", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Ошибка при удалении", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+
+        val backButton = findViewById<TextView>(R.id.backButton)
+        backButton.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
     }
+
+    private fun bindReviews(reviewsWithUsers: List<Pair<String, Review>>) {
+        reviewsContainer.removeAllViews()
+
+        if (reviewsWithUsers.isEmpty()) {
+            val noReviewsText = TextView(this).apply {
+                text = "Отзывов пока нет"
+                textSize = 16f
+                setTextColor(Color.GRAY)
+            }
+            reviewsContainer.addView(noReviewsText)
+            return
+        }
+
+        for ((userName, review) in reviewsWithUsers) {
+            val reviewTextView = TextView(this).apply {
+                text = "$userName\nОценка: ${review.rating}/5\nКомментарий: ${review.text}"
+                textSize = 16f
+                setPadding(0, 8, 0, 8)
+                typeface = ResourcesCompat.getFont(this@RecipeDetailActivity, R.font.bookerly)
+            }
+
+            reviewsContainer.addView(reviewTextView)
+        }
+    }
+
+
+
 
     private fun bindRecipeData(recipe: Recipe) {
         recipeName.text = recipe.title
         recipeIngredients.text = recipe.ingredients.joinToString("\n")
-        recipeInstructions.text = recipe.steps.joinToString("\n\n") {
-            "${it.title}\n${it.description}\nВремя: ${it.duration} мин"
+
+        instructionsContainer.removeAllViews()
+
+        val inflater = layoutInflater
+
+        for (step in recipe.steps) {
+            // Заголовок этапа
+            val titleView = TextView(this).apply {
+                text = step.title
+                setTextColor(resources.getColor(R.color.ginger))
+                textSize = 18f
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                setPadding(0, 16, 0, 0)
+                typeface = ResourcesCompat.getFont(this@RecipeDetailActivity, R.font.bookerly)
+            }
+            instructionsContainer.addView(titleView)
+
+            // Горизонтальный LinearLayout с иконкой и временем
+            val timeLayout = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                setPadding(0, 4, 0, 4)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            }
+
+
+            val sizeInPx = (25 * resources.displayMetrics.density).toInt()
+            val marginInPx = (8 * resources.displayMetrics.density).toInt()
+
+            val timeIcon = ImageView(this).apply {
+                setImageResource(R.drawable.ic_time)
+                layoutParams = LinearLayout.LayoutParams(sizeInPx, sizeInPx).apply {
+                    rightMargin = marginInPx
+                }
+            }
+
+
+
+            // Текст с временем
+            val timeTextView = TextView(this).apply {
+                text = "${step.duration} мин"
+                textSize = 16f
+                typeface = ResourcesCompat.getFont(this@RecipeDetailActivity, R.font.bookerly)
+                setTextColor(Color.BLACK)
+            }
+
+            timeLayout.addView(timeIcon)
+            timeLayout.addView(timeTextView)
+
+            instructionsContainer.addView(timeLayout)
+
+            // Описание этапа
+            val descView = TextView(this).apply {
+                text = step.description
+                textSize = 16f
+                setPadding(0, 0, 0, 8)
+                typeface = ResourcesCompat.getFont(this@RecipeDetailActivity, R.font.bookerly)
+            }
+            instructionsContainer.addView(descView)
         }
+
         Glide.with(this).load(recipe.photoUrl).into(recipeImage)
     }
+
+
+
+
 }
