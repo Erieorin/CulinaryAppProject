@@ -179,6 +179,17 @@ class RecipeDetailActivity : AppCompatActivity() {
     private fun bindReviews(reviewsWithUsers: List<Pair<String, Review>>) {
         reviewsContainer.removeAllViews()
 
+        val titleTextView = TextView(this).apply {
+            text = "Отзывы"
+            textSize = 18f
+            setTextColor(Color.BLACK)
+            typeface = ResourcesCompat.getFont(this@RecipeDetailActivity, R.font.bookerly)
+            setTypeface(typeface, android.graphics.Typeface.BOLD) // применяем жирный стиль после загрузки
+            setPadding(0, 0, 0, 16)
+        }
+
+        reviewsContainer.addView(titleTextView)
+
         if (reviewsWithUsers.isEmpty()) {
             val noReviewsText = TextView(this).apply {
                 text = "Отзывов пока нет"
@@ -190,16 +201,71 @@ class RecipeDetailActivity : AppCompatActivity() {
         }
 
         for ((userName, review) in reviewsWithUsers) {
-            val reviewTextView = TextView(this).apply {
-                text = "$userName\nОценка: ${review.rating}/5\nКомментарий: ${review.text}"
-                textSize = 16f
-                setPadding(0, 8, 0, 8)
-                typeface = ResourcesCompat.getFont(this@RecipeDetailActivity, R.font.bookerly)
+            // Горизонтальный layout для имени и оценки
+            val headerLayout = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
             }
 
-            reviewsContainer.addView(reviewTextView)
+            val userNameTextView = TextView(this).apply {
+                text = userName
+                textSize = 16f
+                typeface = ResourcesCompat.getFont(this@RecipeDetailActivity, R.font.opensans)
+                setTextColor(Color.BLACK)
+                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            }
+
+            val ratingTextView = TextView(this).apply {
+                text = "Оценка: ${review.rating}/5"
+                textSize = 16f
+                typeface = ResourcesCompat.getFont(this@RecipeDetailActivity, R.font.opensans)
+                textAlignment = View.TEXT_ALIGNMENT_VIEW_END
+                setTextColor(Color.BLACK)
+                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            }
+
+            headerLayout.addView(userNameTextView)
+            headerLayout.addView(ratingTextView)
+
+            val topPaddingPx = (8 * resources.displayMetrics.density).toInt()
+
+            val commentTextView = TextView(this).apply {
+                text = "${review.text}"
+                textSize = 16f
+                setPadding(0, topPaddingPx, 0, 16) // ← верхний отступ добавлен здесь
+                typeface = ResourcesCompat.getFont(this@RecipeDetailActivity, R.font.opensans)
+            }
+
+            reviewsContainer.addView(headerLayout)
+            reviewsContainer.addView(commentTextView)
+
+            val divider = View(this).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    (1 * resources.displayMetrics.density).toInt() // 1dp толщина
+                ).apply {
+                    topMargin = (8 * resources.displayMetrics.density).toInt()
+                }
+                setBackgroundColor(Color.GRAY)
+            }
+            reviewsContainer.addView(divider)
+
+            val spacer = View(this).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    (8 * resources.displayMetrics.density).toInt() // 8dp
+                )
+            }
+            reviewsContainer.addView(spacer)
+
+
         }
     }
+
+
 
 
 

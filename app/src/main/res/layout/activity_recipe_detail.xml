@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_nav"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:paddingBottom="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -157,80 +158,10 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="12dp" />
-
-                <!-- Пример одного отзыва -->
-                <LinearLayout
-                    android:id="@+id/reviewItem"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="16dp">
-
-                    <!-- Имя пользователя и звезды -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="4dp"
-                        android:gravity="center_vertical">
-
-                        <TextView
-                            android:id="@+id/reviewUsername"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Пользователь123"
-                            android:textColor="#000000"
-                            android:textSize="14sp"
-                            android:textStyle="normal" />
-
-                        <LinearLayout
-                            android:id="@+id/reviewStarsContainer"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <!-- Звезды -->
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_star_filled" />
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_star_filled" />
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_star_filled" />
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_star_border" />
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_star_border" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/reviewText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Отличный рецепт! Делала уже 3 раза, очень понравился всей семье!"
-                        android:textColor="#000000"
-                        android:textSize="14sp"
-                        android:layout_marginTop="10dp" />
-                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-
-
-
     </ScrollView>
 
-    <!-- BottomNavigationView прижат к низу экрана -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
