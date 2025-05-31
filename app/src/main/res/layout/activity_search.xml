@@ -9,14 +9,20 @@
     android:orientation="vertical"
     tools:context=".ui.home.MainActivity">
 
-    <!-- Поисковая строка -->
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:iconifiedByDefault="false"
-        android:queryHint="Поиск рецептов" />
+        android:queryHint="Поиск"
+        app:iconifiedByDefault="false"
+        app:queryHint="Поиск"
+        android:background="@android:color/white" />
+
+
 
     <!-- Horizontal RecyclerView для категорий -->
     <androidx.recyclerview.widget.RecyclerView
@@ -34,7 +40,11 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="Выберите категорию или введите поисковый запрос"
+        android:text="Найдите что-то по вкусу!"
+        android:textColor="@color/ginger"
+        android:fontFamily="@font/bookerly"
+        android:textStyle="bold"
+        android:textSize="36sp"
         android:visibility="visible" />
 
     <!-- Основной RecyclerView для рецептов -->
@@ -47,7 +57,6 @@
         android:padding="8dp"
         tools:listitem="@layout/list_item" />
 
-    <!-- Нижняя навигация -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"

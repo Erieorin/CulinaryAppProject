@@ -73,7 +73,7 @@ class SearchActivity : AppCompatActivity() {
 
         // наблюдение за данными: когда recipes в ViewModel обновляются, RecyclerView автоматически получает новые данные
         recipeViewModel.recipes.observe(this) { meals ->
-            val userId = "user123" // TODO: замените на реальный ID пользователя (из SharedPreferences или Firebase Auth)
+            val userId = "user123"
             val adapter = RecipeAdapter(this@SearchActivity, meals, userId) // адаптер для преобразования данных рецептов в элементы RecyclerView
             recyclerView.layoutManager = GridLayoutManager(this@SearchActivity, 2) // GridLayoutManager размещает элементы в сетке
             recyclerView.adapter = adapter
@@ -95,6 +95,22 @@ class SearchActivity : AppCompatActivity() {
                 return false
             }
         })
+
+        val searchEditText = searchView.findViewById<android.widget.EditText>(
+            androidx.appcompat.R.id.search_src_text
+        )
+        searchEditText.setHintTextColor(android.graphics.Color.GRAY)
+        searchEditText.setTextColor(android.graphics.Color.BLACK)
+        searchEditText.setBackgroundColor(android.graphics.Color.WHITE)
+        searchEditText.textSize = 16f
+        searchEditText.hint = "Поиск"
+        searchEditText.setHintTextColor(android.graphics.Color.GRAY)
+
+
+        val searchPlate = searchView.findViewById<View>(
+            androidx.appcompat.R.id.search_plate
+        )
+        searchPlate?.setBackgroundColor(android.graphics.Color.TRANSPARENT)
 
         // нижняя навигация
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
