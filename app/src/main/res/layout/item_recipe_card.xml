@@ -20,7 +20,7 @@
         <LinearLayout
             android:id="@+id/textBlock"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="wrap_content"
             android:layout_toEndOf="@id/mealImage"
             android:layout_alignTop="@id/mealImage"
             android:layout_marginStart="20dp"
@@ -30,7 +30,7 @@
 
             <!-- Название -->
             <TextView
-                android:id="@+id/textTitle"
+                android:id="@+id/mealName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/bookerly"
@@ -68,6 +68,7 @@
                         android:layout_height="16dp"
                         android:src="@drawable/ic_time" />
                     <TextView
+                        android:id="@+id/cookingTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="30 мин"
@@ -88,6 +89,7 @@
                         android:layout_height="16dp"
                         android:src="@drawable/ic_portions" />
                     <TextView
+                        android:id="@+id/portionsNumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="2 порции"
@@ -107,6 +109,7 @@
                         android:layout_height="16dp"
                         android:src="@drawable/ic_tag" />
                     <TextView
+                        android:id="@+id/recipeTags"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Веган"

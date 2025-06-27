@@ -19,6 +19,9 @@ import com.example.culinaryappproject.ui.register.RegisterActivity
 import com.example.culinaryappproject.models.Recipe
 import com.example.culinaryappproject.ui.home.MainActivity
 
+import androidx.recyclerview.widget.LinearLayoutManager
+
+
 class FavoritesActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
@@ -37,7 +40,8 @@ class FavoritesActivity : AppCompatActivity() {
         currentUserId = "abc123" // Временное значение, замените на реальное
 
         recyclerView = findViewById(R.id.favoritesRecyclerView)
-        recyclerView.layoutManager = GridLayoutManager(this, 2)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
         adapter = RecipeAdapter(this, emptyList(), currentUserId)
         recyclerView.adapter = adapter
 

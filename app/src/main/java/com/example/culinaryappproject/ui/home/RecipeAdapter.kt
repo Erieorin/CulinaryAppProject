@@ -45,7 +45,7 @@ class RecipeAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.list_item, parent, false)
+            .inflate(R.layout.item_recipe_card, parent, false)
         return ViewHolder(view)
     }
 
@@ -55,6 +55,20 @@ class RecipeAdapter(
         Glide.with(context).load(item.photoUrl).into(holder.imageView)
         holder.textView.text = item.title
         holder.updateFavoriteIcon(item.isFavorite)
+
+        holder.itemView.findViewById<TextView>(R.id.cookingTime).text = "${item.cookingTime} мин"
+        holder.itemView.findViewById<TextView>(R.id.portionsNumber).text = "${item.servings} порции"
+
+        val tagsText = buildString {
+            if (item.cuisine.isNotBlank()) {
+                append(item.cuisine)
+            }
+            if (item.tags.isNotEmpty()) {
+                if (isNotEmpty()) append(", ")
+                append(item.tags.joinToString(", "))
+            }
+        }
+        holder.itemView.findViewById<TextView>(R.id.recipeTags).text = tagsText
 
         // обработчик для иконки избранного
         holder.favoriteIcon.setOnClickListener {

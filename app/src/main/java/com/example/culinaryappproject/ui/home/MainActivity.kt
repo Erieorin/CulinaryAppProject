@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 import com.google.firebase.FirebaseApp
 import android.util.Log
+import androidx.recyclerview.widget.LinearLayoutManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -551,7 +552,7 @@ class MainActivity : AppCompatActivity() {
 
         // Инициализация RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = GridLayoutManager(this, 2)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         /* Наблюдение за данными рецептов
         recipeViewModel.recipes.observe(this) { meals ->
