@@ -65,7 +65,8 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
-    implementation ("com.google.android.material:material:1.6.0")
+//    implementation ("com.google.android.material:material:1.6.0")
+    implementation ("com.google.android.material:material:1.11.0")
 
     //register
     implementation ("com.google.dagger:hilt-android:2.48")

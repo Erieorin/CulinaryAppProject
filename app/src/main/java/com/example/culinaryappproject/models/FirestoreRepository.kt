@@ -191,6 +191,20 @@ object FirestoreRepository {
         }
     }
 
-
+    fun getAllTags(callback: (List<String>) -> Unit) {
+        db.collection("recipes")
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val allTags = snapshot.documents.flatMap { document ->
+                    val tags = document.get("tags") as? List<String>
+                    tags ?: emptyList()
+                }
+                val uniqueTags = allTags.toSet().toList()
+                callback(uniqueTags)
+            }
+            .addOnFailureListener {
+                callback(emptyList())
+            }
+    }
 
 }

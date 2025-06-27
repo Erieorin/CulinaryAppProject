@@ -56,39 +56,39 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
             _recipes.value = combinedRecipes.toList()
 
             // 2. Загружаем из внешнего API
-            ApiClient.apiService.getRecipes().enqueue(object : Callback<RecipeResponse> {
-                override fun onResponse(call: Call<RecipeResponse>, response: Response<RecipeResponse>) {
-                    if (response.isSuccessful) {
-                        val meals = response.body()?.meals ?: emptyList()
-
-                        val apiRecipes = meals.map { meal ->
-                            Recipe(
-                                id = meal.idMeal ?: "",
-                                userId = "api", // пометка, что из API
-                                title = meal.strMeal ?: "Без названия",
-                                photoUrl = meal.strMealThumb ?: "",
-                                cookingTime = 30,
-                                averageRating = 0.0,
-                                servings = 2,
-                                cuisine = "API",
-                                tags = listOf("из API"),
-                                ingredients = listOf(),
-                                steps = listOf(),
-                                reviews = listOf()
-                            )
-                        }
-
-                        combinedRecipes.addAll(apiRecipes)
-                        _recipes.postValue(combinedRecipes)
-                    } else {
-                        Log.e(TAG, "Ошибка получения рецептов из API: ${response.message()}")
-                    }
-                }
-
-                override fun onFailure(call: Call<RecipeResponse>, t: Throwable) {
-                    Log.e(TAG, "Ошибка API-запроса: ${t.message}", t)
-                }
-            })
+//            ApiClient.apiService.getRecipes().enqueue(object : Callback<RecipeResponse> {
+//                override fun onResponse(call: Call<RecipeResponse>, response: Response<RecipeResponse>) {
+//                    if (response.isSuccessful) {
+//                        val meals = response.body()?.meals ?: emptyList()
+//
+//                        val apiRecipes = meals.map { meal ->
+//                            Recipe(
+//                                id = meal.idMeal ?: "",
+//                                userId = "api", // пометка, что из API
+//                                title = meal.strMeal ?: "Без названия",
+//                                photoUrl = meal.strMealThumb ?: "",
+//                                cookingTime = 30,
+//                                averageRating = 0.0,
+//                                servings = 2,
+//                                cuisine = "API",
+//                                tags = listOf("из API"),
+//                                ingredients = listOf(),
+//                                steps = listOf(),
+//                                reviews = listOf()
+//                            )
+//                        }
+//
+//                        combinedRecipes.addAll(apiRecipes)
+//                        _recipes.postValue(combinedRecipes)
+//                    } else {
+//                        Log.e(TAG, "Ошибка получения рецептов из API: ${response.message()}")
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<RecipeResponse>, t: Throwable) {
+//                    Log.e(TAG, "Ошибка API-запроса: ${t.message}", t)
+//                }
+//            })
         }
     }
 
@@ -187,4 +187,55 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
         }
         _recipes.value = updatedRecipes
     }
+
+    private val _tags = MutableLiveData<List<String>>()
+    val tags: LiveData<List<String>> get() = _tags
+
+    fun fetchTags() {
+        FirestoreRepository.getAllTags { tagList ->
+            _tags.postValue(tagList)
+        }
+    }
+
+    fun fetchRecipesByTag(tag: String) {
+        FirestoreRepository.getRecipesFromFirestore { allRecipes ->
+            val filtered = allRecipes.filter { it.tags.contains(tag) }
+            _recipes.postValue(filtered)
+            _showRecipes.postValue(true)
+        }
+    }
+
+    private val _cuisines = MutableLiveData<List<String>>()
+    val cuisines: LiveData<List<String>> get() = _cuisines
+
+    fun fetchRecipesByTagAndCuisine(tag: String?, cuisine: String?) {
+        FirestoreRepository.getRecipesFromFirestore { allRecipes ->
+            val filtered = allRecipes.filter { recipe ->
+                val matchesTag = tag == null || recipe.tags.contains(tag)
+                val matchesCuisine = cuisine == null ||
+                        recipe.cuisine.equals(cuisine, ignoreCase = true)
+                matchesTag && matchesCuisine
+            }
+
+            // Если оба фильтра null - показываем пустой список или все рецепты
+            if (tag == null && cuisine == null) {
+                _showRecipes.postValue(false)
+                _recipes.postValue(emptyList())
+            } else {
+                _recipes.postValue(filtered)
+                _showRecipes.postValue(true)
+            }
+        }
+    }
+
+    fun fetchCuisines() {
+        FirestoreRepository.getRecipesFromFirestore { recipes ->
+            val cuisinesSet = recipes.mapNotNull { it.cuisine }
+                .filter { it.isNotBlank() }
+                .toSet()
+                .sorted()
+            _cuisines.postValue(cuisinesSet)
+        }
+    }
+
 }

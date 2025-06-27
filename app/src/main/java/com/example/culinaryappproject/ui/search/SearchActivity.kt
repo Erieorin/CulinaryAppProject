@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.culinaryappproject.R
 import androidx.appcompat.widget.SearchView
-import com.example.culinaryappproject.ui.home.CategoryAdapter
 import com.example.culinaryappproject.ui.home.RecipeViewModel
 import com.example.culinaryappproject.ui.home.RecipeAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -17,105 +16,106 @@ import android.content.Intent
 import android.view.View
 import android.widget.TextView
 import com.example.culinaryappproject.ui.favorites.FavoritesActivity
+import com.example.culinaryappproject.ui.home.CuisineAdapter
 import com.example.culinaryappproject.ui.home.MainActivity
+import com.example.culinaryappproject.ui.home.TagAdapter
 import com.example.culinaryappproject.ui.register.RegisterActivity
 
-
 class SearchActivity : AppCompatActivity() {
-    private lateinit var recyclerView: RecyclerView // отображает список рецептов в виде сетки (2 колонки)
-    private val recipeViewModel: RecipeViewModel by viewModels() // хранит и управляет данными о рецептах (получает их из API)
-    private lateinit var categoriesRecyclerView: RecyclerView
+    private lateinit var recyclerView: RecyclerView
+    private val recipeViewModel: RecipeViewModel by viewModels()
+
+    private lateinit var tagsRecyclerView: RecyclerView
+    private lateinit var cuisinesRecyclerView: RecyclerView
     private lateinit var emptyStateText: TextView
+
+    private var selectedTag: String? = null
+    private var selectedCuisine: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge() // делает контент полноэкранным (учитывает системные панели — статус-бар и навигацию)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_search)
 
-        // инициализация RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
-        categoriesRecyclerView = findViewById(R.id.categoriesRecyclerView)
-
+        tagsRecyclerView = findViewById(R.id.tagsRecyclerView)
+        cuisinesRecyclerView = findViewById(R.id.cuisinesRecyclerView)
         emptyStateText = findViewById(R.id.emptyStateText)
 
-        // Настройка RecyclerView для категорий
-        categoriesRecyclerView.layoutManager = LinearLayoutManager(
-            this,
-            LinearLayoutManager.HORIZONTAL,
-            false
-        )
-
-        // Настройка RecyclerView для рецептов
+        tagsRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        cuisinesRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = GridLayoutManager(this, 2)
 
-        // Скрываем рецепты при старте
         recyclerView.visibility = View.GONE
         emptyStateText.visibility = View.VISIBLE
 
-        // Наблюдение за флагом отображения рецептов
+        recipeViewModel.fetchCombinedRecipes()
+
+        // Показывать/скрывать рецепты
         recipeViewModel.showRecipes.observe(this) { show ->
-            if (show) {
-                recyclerView.visibility = View.VISIBLE
-                emptyStateText.visibility = View.GONE
-            } else {
-                recyclerView.visibility = View.GONE
-                emptyStateText.visibility = View.VISIBLE
-            }
+            recyclerView.visibility = if (show) View.VISIBLE else View.GONE
+            emptyStateText.visibility = if (show) View.GONE else View.VISIBLE
         }
 
-        // Наблюдение за категориями
-        recipeViewModel.categories.observe(this) { categories ->
-            val adapter = CategoryAdapter(categories) { category ->
-                recipeViewModel.fetchRecipesByCategory(category)
+        // Тэги
+        recipeViewModel.tags.observe(this) { tags ->
+            val adapter = TagAdapter(tags) { tag ->
+                selectedTag = if (tag.isBlank()) null else tag
+                updateFiltersAndRefresh()
             }
-            categoriesRecyclerView.adapter = adapter
+            tagsRecyclerView.adapter = adapter
         }
 
-        // наблюдение за данными: когда recipes в ViewModel обновляются, RecyclerView автоматически получает новые данные
+        // Кухни
+        recipeViewModel.cuisines.observe(this) { cuisines ->
+            val adapter = CuisineAdapter(cuisines) { cuisine ->
+                selectedCuisine = if (cuisine.isBlank()) null else cuisine
+                updateFiltersAndRefresh()
+            }
+            cuisinesRecyclerView.adapter = adapter
+        }
+
+
+        // Рецепты
         recipeViewModel.recipes.observe(this) { meals ->
-            val userId = "user123"
-            val adapter = RecipeAdapter(this@SearchActivity, meals, userId) // адаптер для преобразования данных рецептов в элементы RecyclerView
-            recyclerView.layoutManager = GridLayoutManager(this@SearchActivity, 2) // GridLayoutManager размещает элементы в сетке
+            val adapter = RecipeAdapter(this, meals, "user123")
             recyclerView.adapter = adapter
         }
 
-        recipeViewModel.fetchCategories()
+        recipeViewModel.fetchTags()
+        recipeViewModel.fetchCuisines() // новый вызов
         recipeViewModel.resetRecipes()
 
-        // поисковое окно
+        // Поиск
         val searchView = findViewById<SearchView>(R.id.searchView)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
+            override fun onQueryTextSubmit(query: String) = false.also {
                 recipeViewModel.searchRecipes(query)
-                return false
             }
 
-            override fun onQueryTextChange(newText: String): Boolean {
+            override fun onQueryTextChange(newText: String) = false.also {
                 recipeViewModel.searchRecipes(newText)
-                return false
             }
         })
 
         val searchEditText = searchView.findViewById<android.widget.EditText>(
             androidx.appcompat.R.id.search_src_text
         )
-        searchEditText.setHintTextColor(android.graphics.Color.GRAY)
         searchEditText.setTextColor(android.graphics.Color.BLACK)
-        searchEditText.setBackgroundColor(android.graphics.Color.WHITE)
-        searchEditText.textSize = 16f
-        searchEditText.hint = "Поиск"
         searchEditText.setHintTextColor(android.graphics.Color.GRAY)
-
+        searchEditText.setBackgroundColor(android.graphics.Color.WHITE)
+        searchEditText.hint = "Поиск"
+        searchEditText.textSize = 16f
 
         val searchPlate = searchView.findViewById<View>(
             androidx.appcompat.R.id.search_plate
         )
         searchPlate?.setBackgroundColor(android.graphics.Color.TRANSPARENT)
 
-        // нижняя навигация
+        // Навигация
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
         bottomNav.setOnItemSelectedListener { item ->
-            when(item.itemId) {
+            when (item.itemId) {
                 R.id.nav_home -> {
                     startActivity(Intent(this, MainActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
@@ -123,11 +123,7 @@ class SearchActivity : AppCompatActivity() {
                     finish()
                     true
                 }
-
-                R.id.nav_search -> {
-                    true
-                }
-
+                R.id.nav_search -> true
                 R.id.nav_favorites -> {
                     startActivity(Intent(this, FavoritesActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
@@ -135,7 +131,6 @@ class SearchActivity : AppCompatActivity() {
                     finish()
                     true
                 }
-
                 R.id.navigation_register -> {
                     startActivity(Intent(this, RegisterActivity::class.java))
                     true
@@ -145,4 +140,19 @@ class SearchActivity : AppCompatActivity() {
         }
         bottomNav.selectedItemId = R.id.nav_search
     }
+
+    private fun updateFiltersAndRefresh() {
+        // Обновляем адаптеры чтобы показать выбранные фильтры
+        (tagsRecyclerView.adapter as? TagAdapter)?.setSelectedTag(selectedTag)
+        (cuisinesRecyclerView.adapter as? CuisineAdapter)?.setSelectedCuisine(selectedCuisine)
+
+        // Применяем фильтры
+        recipeViewModel.fetchRecipesByTagAndCuisine(selectedTag, selectedCuisine)
+
+        // Обновляем видимость
+        val hasFilters = selectedTag != null || selectedCuisine != null
+        recyclerView.visibility = if (hasFilters) View.VISIBLE else View.GONE
+        emptyStateText.visibility = if (hasFilters) View.GONE else View.VISIBLE
+    }
 }
+
