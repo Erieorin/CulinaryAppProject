@@ -15,7 +15,6 @@
         android:paddingBottom="56dp"
         android:clipToPadding="false">
 
-        <!-- высота нижнего меню учтена паддингом -->
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

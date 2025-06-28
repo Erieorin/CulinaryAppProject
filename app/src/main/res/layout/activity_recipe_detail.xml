@@ -114,7 +114,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone"> <!--visible-->
+                android:visibility="gone">
 
             </LinearLayout>
 
@@ -147,7 +147,6 @@
                 android:layout_marginHorizontal="4dp"
                 android:clipToOutline="true">
 
-                <!-- Заголовок "Отзывы" -->
                 <TextView
                     android:id="@+id/reviewsTitle"
                     android:layout_width="match_parent"
@@ -161,6 +160,25 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <Button
+        android:id="@+id/cookButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_nav"
+        android:fontFamily="@font/opensans_semibold"
+        android:letterSpacing="0.0"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="#6D3A34"
+        android:text="Приготовить"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:padding="12dp"/>
+
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
