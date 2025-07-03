@@ -15,11 +15,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.content.Intent
 import android.view.View
 import android.widget.TextView
+import com.example.culinaryappproject.models.FirestoreRepository
 import com.example.culinaryappproject.ui.favorites.FavoritesActivity
 import com.example.culinaryappproject.ui.home.CuisineAdapter
 import com.example.culinaryappproject.ui.home.MainActivity
 import com.example.culinaryappproject.ui.home.TagAdapter
 import com.example.culinaryappproject.ui.register.RegisterActivity
+import com.google.firebase.auth.FirebaseAuth
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -44,7 +46,7 @@ class SearchActivity : AppCompatActivity() {
 
         tagsRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         cuisinesRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView.layoutManager = GridLayoutManager(this, 2)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         recyclerView.visibility = View.GONE
         emptyStateText.visibility = View.VISIBLE
@@ -74,13 +76,27 @@ class SearchActivity : AppCompatActivity() {
             }
             cuisinesRecyclerView.adapter = adapter
         }
+        val user = FirebaseAuth.getInstance().currentUser
+        val currentUserId = user?.uid
+
+
 
 
         // Рецепты
         recipeViewModel.recipes.observe(this) { meals ->
-            val adapter = RecipeAdapter(this, meals, "user123")
+            val adapter = RecipeAdapter(this, meals, currentUserId.toString())
             recyclerView.adapter = adapter
+            meals.forEach { recipe ->
+                if (currentUserId != null) {
+                    FirestoreRepository.checkIfFavorite(currentUserId, recipe.id) { isFavorite ->
+                        recipe.isFavorite = isFavorite
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+
+            }
         }
+
 
         recipeViewModel.fetchTags()
         recipeViewModel.fetchCuisines() // новый вызов
