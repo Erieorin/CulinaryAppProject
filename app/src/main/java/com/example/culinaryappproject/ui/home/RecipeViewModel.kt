@@ -54,41 +54,6 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
 
             // Обновляем UI пока есть только Firestore
             _recipes.value = combinedRecipes.toList()
-
-            // 2. Загружаем из внешнего API
-//            ApiClient.apiService.getRecipes().enqueue(object : Callback<RecipeResponse> {
-//                override fun onResponse(call: Call<RecipeResponse>, response: Response<RecipeResponse>) {
-//                    if (response.isSuccessful) {
-//                        val meals = response.body()?.meals ?: emptyList()
-//
-//                        val apiRecipes = meals.map { meal ->
-//                            Recipe(
-//                                id = meal.idMeal ?: "",
-//                                userId = "api", // пометка, что из API
-//                                title = meal.strMeal ?: "Без названия",
-//                                photoUrl = meal.strMealThumb ?: "",
-//                                cookingTime = 30,
-//                                averageRating = 0.0,
-//                                servings = 2,
-//                                cuisine = "API",
-//                                tags = listOf("из API"),
-//                                ingredients = listOf(),
-//                                steps = listOf(),
-//                                reviews = listOf()
-//                            )
-//                        }
-//
-//                        combinedRecipes.addAll(apiRecipes)
-//                        _recipes.postValue(combinedRecipes)
-//                    } else {
-//                        Log.e(TAG, "Ошибка получения рецептов из API: ${response.message()}")
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<RecipeResponse>, t: Throwable) {
-//                    Log.e(TAG, "Ошибка API-запроса: ${t.message}", t)
-//                }
-//            })
         }
     }
 

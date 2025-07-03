@@ -24,7 +24,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.example.culinaryappproject.models.FirestoreRepository
 import com.example.culinaryappproject.models.Recipe
 import com.example.culinaryappproject.models.Review
-
+import com.google.firebase.auth.FirebaseAuth
 
 
 class RecipeDetailActivity : AppCompatActivity() {
@@ -50,8 +50,6 @@ class RecipeDetailActivity : AppCompatActivity() {
         instructionsContainer = findViewById(R.id.instructionsContainer)
         reviewsContainer = findViewById(R.id.reviewsContainer)
 
-
-
         val recipeId = intent.getStringExtra("RECIPE_ID")
 
         if (recipeId.isNullOrEmpty()) {
@@ -76,8 +74,6 @@ class RecipeDetailActivity : AppCompatActivity() {
                 }
             }
         }
-
-
 
 
         // Нижняя навигация
@@ -132,14 +128,17 @@ class RecipeDetailActivity : AppCompatActivity() {
 
         val favoriteIcon = findViewById<ImageView>(R.id.favoriteIcon)
         var isFavorite = false
-        val userId = "abc123"
+        val user = FirebaseAuth.getInstance().currentUser
+        val userId = user?.uid
 
-        FirestoreRepository.getFavoriteRecipes(userId) { favorites ->
-            isFavorite = favorites.contains(recipeId)
-            favoriteIcon.setImageResource(
-                if (isFavorite) R.drawable.ic_favorite_filled_white
-                else R.drawable.ic_favorite_border_white
-            )
+        if (userId != null) {
+            FirestoreRepository.getFavoriteRecipes(userId) { favorites ->
+                isFavorite = favorites.contains(recipeId)
+                favoriteIcon.setImageResource(
+                    if (isFavorite) R.drawable.ic_favorite_filled_white
+                    else R.drawable.ic_favorite_border_white
+                )
+            }
         }
 
         favoriteIcon.setOnClickListener {
@@ -151,19 +150,23 @@ class RecipeDetailActivity : AppCompatActivity() {
             )
 
             if (isFavorite) {
-                FirestoreRepository.addToFavorites(userId, recipeId) { success ->
-                    if (success) {
-                        Toast.makeText(this, "Добавлено в избранное", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this, "Ошибка при добавлении", Toast.LENGTH_SHORT).show()
+                if (userId != null) {
+                    FirestoreRepository.addToFavorites(userId, recipeId) { success ->
+                        if (success) {
+                            Toast.makeText(this, "Добавлено в избранное", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "Ошибка при добавлении", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             } else {
-                FirestoreRepository.removeFromFavorites(userId, recipeId) { success ->
-                    if (success) {
-                        Toast.makeText(this, "Удалено из избранного", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this, "Ошибка при удалении", Toast.LENGTH_SHORT).show()
+                if (userId != null) {
+                    FirestoreRepository.removeFromFavorites(userId, recipeId) { success ->
+                        if (success) {
+                            Toast.makeText(this, "Удалено из избранного", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "Ошибка при удалении", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
@@ -338,8 +341,4 @@ class RecipeDetailActivity : AppCompatActivity() {
 
         Glide.with(this).load(recipe.photoUrl).into(recipeImage)
     }
-
-
-
-
 }

@@ -20,6 +20,7 @@ import com.example.culinaryappproject.models.Recipe
 import com.example.culinaryappproject.ui.home.MainActivity
 
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 
 
 class FavoritesActivity : AppCompatActivity() {
@@ -27,7 +28,8 @@ class FavoritesActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private val recipeViewModel: RecipeViewModel by viewModels()
     private lateinit var adapter: RecipeAdapter
-    private var currentUserId = "abc123" // Здесь должен быть ID текущего пользователя
+    private val user = FirebaseAuth.getInstance().currentUser
+    private val currentUserId = user?.uid
 
     private var recipesObserver: Observer<List<Recipe>>? = null
 
@@ -36,13 +38,11 @@ class FavoritesActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_favorites)
 
-        // TODO: Получить ID текущего пользователя (из SharedPreferences или Firebase Auth)
-        currentUserId = "abc123" // Временное значение, замените на реальное
 
         recyclerView = findViewById(R.id.favoritesRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        adapter = RecipeAdapter(this, emptyList(), currentUserId)
+        adapter = RecipeAdapter(this, emptyList(), currentUserId.toString())
         recyclerView.adapter = adapter
 
         loadFavoriteRecipes()
@@ -74,24 +74,26 @@ class FavoritesActivity : AppCompatActivity() {
     }
 
     private fun loadFavoriteRecipes() {
-        FirestoreRepository.getFavoriteRecipes(currentUserId) { favoriteRecipeIds ->
-            if (favoriteRecipeIds.isNotEmpty()) {
-                recipesObserver = Observer { allRecipes ->
-                    if (allRecipes.isNotEmpty()) {
-                        val favoriteRecipes = allRecipes.filter { it.id in favoriteRecipeIds }
-                            .map { it.copy(isFavorite = true) }
+        if (currentUserId != null) {
+            FirestoreRepository.getFavoriteRecipes(currentUserId) { favoriteRecipeIds ->
+                if (favoriteRecipeIds.isNotEmpty()) {
+                    recipesObserver = Observer { allRecipes ->
+                        if (allRecipes.isNotEmpty()) {
+                            val favoriteRecipes = allRecipes.filter { it.id in favoriteRecipeIds }
+                                .map { it.copy(isFavorite = true) }
 
-                        adapter.updateRecipes(favoriteRecipes)
+                            adapter.updateRecipes(favoriteRecipes)
+                        }
                     }
-                }
 
-                recipesObserver?.let { observer ->
-                    recipeViewModel.recipes.observe(this, observer)
-                }
+                    recipesObserver?.let { observer ->
+                        recipeViewModel.recipes.observe(this, observer)
+                    }
 
-                recipeViewModel.fetchCombinedRecipes()
-            } else {
-                adapter.updateRecipes(emptyList())
+                    recipeViewModel.fetchCombinedRecipes()
+                } else {
+                    adapter.updateRecipes(emptyList())
+                }
             }
         }
     }
