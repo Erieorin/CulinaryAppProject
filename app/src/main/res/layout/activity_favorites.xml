@@ -8,6 +8,9 @@
     android:orientation="vertical"
     tools:context=".ui.favorites.FavoritesActivity">
 
+    <include
+        layout="@layout/header" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
