@@ -26,8 +26,6 @@ import com.example.culinaryappproject.models.User
 import com.example.culinaryappproject.models.Review
 import com.example.culinaryappproject.models.Recipe
 import com.example.culinaryappproject.models.Step
-import com.example.culinaryappproject.ui.register.RegisterActivity
-import com.example.culinaryappproject.ui.profile.ProfileActivity
 
 class HomeFragment : Fragment() {
     private val recipeViewModel: RecipeViewModel by activityViewModels()

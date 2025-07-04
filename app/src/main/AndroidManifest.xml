@@ -27,26 +27,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.profile.ProfileActivity"
-            android:exported="false"
-            android:theme="@style/Theme.CulinaryAppProject.NoActionBar" />
+        <activity android:name=".ui.register.AuthActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.details.RecipeDetailActivity"
             android:launchMode="singleTop"
             android:theme="@style/Theme.CulinaryAppProject.NoActionBar"
             android:exported="false"/>
-        <activity
-            android:name=".ui.search.SearchActivity"
-            android:launchMode="singleTop"
-            android:theme="@style/Theme.CulinaryAppProject.NoActionBar"
-            android:exported="false"/>
-        <activity android:name=".ui.register.RegisterActivity" />
-        <activity android:name=".ui.login.LoginActivity" />
-
-        <activity
-            android:name=".ui.favorites.FavoritesActivity"
-            android:exported="false" />
         <receiver
             android:name=".receivers.RecipeNotificationReceiver"
             android:exported="false"

@@ -30,7 +30,6 @@ class RecipeDetailActivity : AppCompatActivity() {
 
     private lateinit var recipeImage: ImageView
     private lateinit var recipeName: TextView
-    private lateinit var recipeInstructions: TextView
     private lateinit var recipeIngredients: TextView
 
     private lateinit var instructionsContainer: LinearLayout
@@ -74,23 +73,6 @@ class RecipeDetailActivity : AppCompatActivity() {
             }
         }
 
-
-        // Нижняя навигация
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> {
-                    startActivity(Intent(this, MainActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                    })
-                    finish()
-                    true
-                }
-
-
-                else -> false
-            }
-        }
         val transparentStates = ColorStateList(
             arrayOf(
                 intArrayOf(android.R.attr.state_checked),
@@ -98,9 +80,6 @@ class RecipeDetailActivity : AppCompatActivity() {
             ),
             intArrayOf(Color.BLACK, Color.BLACK)
         )
-        bottomNav.itemIconTintList = transparentStates
-        bottomNav.itemTextColor = transparentStates
-
         val toggleButton = findViewById<TextView>(R.id.toggleStepsButton)
         val instructionsContainer = findViewById<View>(R.id.instructionsContainer)
 
@@ -259,11 +238,6 @@ class RecipeDetailActivity : AppCompatActivity() {
 
         }
     }
-
-
-
-
-
 
     private fun bindRecipeData(recipe: Recipe) {
         recipeName.text = recipe.title

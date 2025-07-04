@@ -24,14 +24,15 @@ import com.example.culinaryappproject.models.Review
 import com.example.culinaryappproject.models.Recipe
 import com.example.culinaryappproject.models.Step
 import com.example.culinaryappproject.models.FirestoreRepository
-import com.example.culinaryappproject.ui.register.RegisterActivity
-import com.example.culinaryappproject.ui.profile.ProfileActivity
+import com.example.culinaryappproject.ui.profile.ProfileFragment
 import com.google.firebase.auth.FirebaseAuth
 
 import com.google.firebase.FirebaseApp
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.culinaryappproject.ui.favorites.FavoritesFragment
+import com.example.culinaryappproject.ui.register.AuthActivity
+import com.example.culinaryappproject.ui.register.RegisterFragment
 import com.example.culinaryappproject.ui.search.SearchFragment
 
 class MainActivity : AppCompatActivity() {
@@ -135,7 +136,13 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_register -> {
-                    startActivity(Intent(this, RegisterActivity::class.java))
+                    if (FirebaseAuth.getInstance().currentUser != null) {
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, ProfileFragment())
+                            .commit()
+                    } else {
+                        startActivity(Intent(this, AuthActivity::class.java))
+                    }
                     true
                 }
                 else -> false
