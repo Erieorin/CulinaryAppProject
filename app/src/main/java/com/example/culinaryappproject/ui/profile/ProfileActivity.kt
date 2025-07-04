@@ -8,8 +8,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.example.culinaryappproject.ui.register.RegisterActivity
 import android.content.Intent
 import com.example.culinaryappproject.ui.home.MainActivity
-import com.example.culinaryappproject.ui.favorites.FavoritesActivity
-import com.example.culinaryappproject.ui.search.SearchActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.widget.Button
 
@@ -39,20 +37,6 @@ class ProfileActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_home -> {
                     startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                    true
-                }
-                R.id.nav_search -> {
-                    startActivity(Intent(this, SearchActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                    })
-                    finish()
-                    true
-                }
-                R.id.nav_favorites -> {
-                    startActivity(Intent(this, FavoritesActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                    })
                     finish()
                     true
                 }

@@ -18,7 +18,6 @@ import com.bumptech.glide.Glide
 import com.example.culinaryappproject.R
 import com.example.culinaryappproject.models.MealDetail
 import com.example.culinaryappproject.ui.home.MainActivity
-import com.example.culinaryappproject.ui.search.SearchActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.content.res.ResourcesCompat
 import com.example.culinaryappproject.models.FirestoreRepository
@@ -88,13 +87,6 @@ class RecipeDetailActivity : AppCompatActivity() {
                     true
                 }
 
-                R.id.nav_search -> {
-                    startActivity(Intent(this, SearchActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                    })
-                    finish()
-                    true
-                }
 
                 else -> false
             }

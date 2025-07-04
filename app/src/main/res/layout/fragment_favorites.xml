@@ -6,10 +6,9 @@
     android:layout_height="match_parent"
     android:background="#FFDFD1"
     android:orientation="vertical"
-    tools:context=".ui.favorites.FavoritesActivity">
+    tools:context=".ui.favorites.FavoritesFragment">
 
-    <include
-        layout="@layout/header" />
+    <include layout="@layout/header" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -17,7 +16,6 @@
         android:layout_weight="1"
         android:paddingBottom="56dp"
         android:clipToPadding="false">
-
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -52,13 +50,5 @@
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-
     </ScrollView>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nav"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:menu="@menu/bottom_nav" />
-
 </LinearLayout>

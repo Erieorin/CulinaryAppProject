@@ -7,10 +7,8 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.culinaryappproject.R
 import com.example.culinaryappproject.models.User
-import com.example.culinaryappproject.ui.favorites.FavoritesActivity
 import com.example.culinaryappproject.ui.home.MainActivity
 import com.example.culinaryappproject.ui.profile.ProfileActivity
-import com.example.culinaryappproject.ui.search.SearchActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
@@ -98,20 +96,6 @@ class RegisterActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_home -> {
                     startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                    true
-                }
-                R.id.nav_search -> {
-                    startActivity(Intent(this, SearchActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                    })
-                    finish()
-                    true
-                }
-                R.id.nav_favorites -> {
-                    startActivity(Intent(this, FavoritesActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                    })
                     finish()
                     true
                 }

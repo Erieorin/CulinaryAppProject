@@ -9,8 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.culinaryappproject.R
 import com.example.culinaryappproject.ui.profile.ProfileActivity
 import com.example.culinaryappproject.ui.home.MainActivity
-import com.example.culinaryappproject.ui.search.SearchActivity
-import com.example.culinaryappproject.ui.favorites.FavoritesActivity
 import com.example.culinaryappproject.ui.register.RegisterActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -55,14 +53,6 @@ class LoginActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_home -> {
                     startActivity(Intent(this, MainActivity::class.java))
-                    true
-                }
-                R.id.nav_search -> {
-                    startActivity(Intent(this, SearchActivity::class.java))
-                    true
-                }
-                R.id.nav_favorites -> {
-                    startActivity(Intent(this, FavoritesActivity::class.java))
                     true
                 }
                 R.id.navigation_register -> {
