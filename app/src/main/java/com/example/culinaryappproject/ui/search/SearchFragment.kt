@@ -19,8 +19,6 @@ import com.example.culinaryappproject.models.FirestoreRepository
 import com.example.culinaryappproject.ui.home.CuisineAdapter
 import com.example.culinaryappproject.ui.home.TagAdapter
 import com.google.firebase.auth.FirebaseAuth
-import androidx.activity.viewModels
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 
 class SearchFragment : Fragment() {
@@ -33,6 +31,7 @@ class SearchFragment : Fragment() {
 
     private var selectedTag: String? = null
     private var selectedCuisine: String? = null
+    private var currentSearchQuery: String = ""
 
     private lateinit var adapter: RecipeAdapter
     private var currentUserId: String? = null
@@ -68,38 +67,33 @@ class SearchFragment : Fragment() {
         adapter = RecipeAdapter(requireContext(), emptyList(), currentUserId.toString())
         recyclerView.adapter = adapter
 
-
         setupObservers()
         setupSearchView(view)
         fetchInitialData()
     }
 
     private fun setupObservers() {
-        // Показывать/скрывать рецепты
         recipeViewModel.showRecipes.observe(viewLifecycleOwner) { show ->
             recyclerView.visibility = if (show) View.VISIBLE else View.GONE
             emptyStateText.visibility = if (show) View.GONE else View.VISIBLE
         }
 
-        // Тэги
         recipeViewModel.tags.observe(viewLifecycleOwner) { tags ->
             val tagAdapter = TagAdapter(tags) { tag ->
-                selectedTag = if (tag.isBlank()) null else tag
+                selectedTag = if (tag.isBlank() || selectedTag == tag) null else tag
                 updateFiltersAndRefresh()
             }
             tagsRecyclerView.adapter = tagAdapter
         }
 
-        // Кухни
         recipeViewModel.cuisines.observe(viewLifecycleOwner) { cuisines ->
             val cuisineAdapter = CuisineAdapter(cuisines) { cuisine ->
-                selectedCuisine = if (cuisine.isBlank()) null else cuisine
+                selectedCuisine = if (cuisine.isBlank() || selectedCuisine == cuisine) null else cuisine
                 updateFiltersAndRefresh()
             }
             cuisinesRecyclerView.adapter = cuisineAdapter
         }
 
-        // Рецепты
         recipeViewModel.recipes.observe(viewLifecycleOwner) { recipes ->
             adapter.updateRecipes(recipes)
             recipes.forEach { recipe ->
@@ -116,17 +110,20 @@ class SearchFragment : Fragment() {
     private fun setupSearchView(view: View) {
         val searchView = view.findViewById<SearchView>(R.id.searchView)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String) = false.also {
-                recipeViewModel.searchRecipes(query)
+            override fun onQueryTextSubmit(query: String): Boolean {
+                currentSearchQuery = query
+                updateFiltersAndRefresh()
+                return true
             }
 
-            override fun onQueryTextChange(newText: String) = false.also {
-                recipeViewModel.searchRecipes(newText)
+            override fun onQueryTextChange(newText: String): Boolean {
+                currentSearchQuery = newText
+                updateFiltersAndRefresh()
+                return true
             }
         })
 
-        // Стилизация SearchView
-        val searchEditText = searchView.findViewById<android.widget.EditText>(
+        val searchEditText = searchView.findViewById<EditText>(
             androidx.appcompat.R.id.search_src_text
         )
         searchEditText.setTextColor(Color.BLACK)
@@ -149,15 +146,13 @@ class SearchFragment : Fragment() {
     }
 
     private fun updateFiltersAndRefresh() {
-        // Обновляем адаптеры чтобы показать выбранные фильтры
         (tagsRecyclerView.adapter as? TagAdapter)?.setSelectedTag(selectedTag)
         (cuisinesRecyclerView.adapter as? CuisineAdapter)?.setSelectedCuisine(selectedCuisine)
 
-        // Применяем фильтры
-        recipeViewModel.fetchRecipesByTagAndCuisine(selectedTag, selectedCuisine)
+        // Применяем все фильтры (поиск, тэг, кухня) одновременно
+        recipeViewModel.searchWithFilters(currentSearchQuery, selectedTag, selectedCuisine)
 
-        // Обновляем видимость
-        val hasFilters = selectedTag != null || selectedCuisine != null
+        val hasFilters = selectedTag != null || selectedCuisine != null || currentSearchQuery.isNotEmpty()
         recyclerView.visibility = if (hasFilters) View.VISIBLE else View.GONE
         emptyStateText.visibility = if (hasFilters) View.GONE else View.VISIBLE
     }

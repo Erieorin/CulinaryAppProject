@@ -101,40 +101,30 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
         _recipes.value = emptyList()
     }
 
-    fun searchRecipes(query: String) {
-        if (query.isEmpty()) {
-            _recipes.value = combinedRecipes
-            return
-        }
+    fun searchWithFilters(query: String, tag: String?, cuisine: String?) {
+        FirestoreRepository.getRecipesFromFirestore { allRecipes ->
+            val filtered = allRecipes.filter { recipe ->
+                // Фильтр по поисковому запросу
+                val matchesSearch = query.isEmpty() ||
+                        recipe.title.contains(query, ignoreCase = true)
 
-        if (query.length > 2) {
-            ApiClient.apiService.searchMeals(query).enqueue(object : Callback<RecipeResponse> {
-                override fun onResponse(call: Call<RecipeResponse>, response: Response<RecipeResponse>) {
-                    if (response.isSuccessful) {
-                        val meals = response.body()?.meals ?: emptyList()
-                        val searchResults = meals.map {
-                            Recipe(
-                                id = it.idMeal ?: "",
-                                userId = "api",
-                                title = it.strMeal ?: "",
-                                photoUrl = it.strMealThumb ?: "",
-                                cuisine = "Поиск"
-                            )
-                        }
-                        _recipes.value = searchResults
-                    }
-                }
+                // Фильтр по тэгу
+                val matchesTag = tag == null || recipe.tags.contains(tag)
 
-                override fun onFailure(call: Call<RecipeResponse>, t: Throwable) {
-                    Log.e(TAG, "Ошибка поиска: ${t.message}", t)
-                }
-            })
-        } else {
-            val filtered = combinedRecipes.filter {
-                it.title.contains(query, ignoreCase = true)
+                // Фильтр по кухне
+                val matchesCuisine = cuisine == null ||
+                        recipe.cuisine.equals(cuisine, ignoreCase = true)
+
+                matchesSearch && matchesTag && matchesCuisine
             }
-            _recipes.value = filtered
+
+            _recipes.postValue(filtered)
+            _showRecipes.postValue(query.isNotEmpty() || tag != null || cuisine != null)
         }
+    }
+
+    fun searchRecipes(query: String) {
+        searchWithFilters(query, null, null)
     }
 
     fun getRandomRecipe(): Recipe? {
