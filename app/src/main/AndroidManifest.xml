@@ -39,9 +39,12 @@
             android:launchMode="singleTop"
             android:theme="@style/Theme.CulinaryAppProject.NoActionBar"
             android:exported="false"/>
+        <activity
+            android:name=".ui.cooking.StepStageActivity"
+            android:exported="false" />
         <receiver
             android:name=".receivers.RecipeNotificationReceiver"
-            android:exported="false"
+            android:exported="true"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>

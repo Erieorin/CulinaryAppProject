@@ -1,5 +1,8 @@
 package com.example.culinaryappproject.models
 
+import java.io.Serializable
+
+
 data class Recipe(
     val id: String = "", //id самого рецепта (можно генерировать UUID или использовать Firestore ID)
     val userId: String = "", //id пользователя, кто выложил
@@ -15,5 +18,4 @@ data class Recipe(
     val steps: List<Step> = emptyList(), //этапы приготовления
     val reviews: List<Review> = emptyList(), //отзывы к рецепту
     var isFavorite: Boolean = false
-)
-
+) : Serializable

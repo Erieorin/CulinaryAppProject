@@ -3,37 +3,25 @@ package com.example.culinaryappproject.ui.home
 import android.Manifest
 import android.app.AlarmManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.culinaryappproject.R
-import androidx.appcompat.widget.SearchView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.example.culinaryappproject.receivers.RecipeNotificationReceiver
 import java.util.Calendar
-import com.example.culinaryappproject.models.User
-import com.example.culinaryappproject.models.Review
-import com.example.culinaryappproject.models.Recipe
-import com.example.culinaryappproject.models.Step
-import com.example.culinaryappproject.models.FirestoreRepository
 import com.example.culinaryappproject.ui.profile.ProfileFragment
 import com.google.firebase.auth.FirebaseAuth
 
 import com.google.firebase.FirebaseApp
-import android.util.Log
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.culinaryappproject.ui.favorites.FavoritesFragment
 import com.example.culinaryappproject.ui.register.AuthActivity
-import com.example.culinaryappproject.ui.register.RegisterFragment
 import com.example.culinaryappproject.ui.search.SearchFragment
+import com.example.culinaryappproject.utils.NotificationHelper
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Настройка ежедневных уведомлений
+        NotificationHelper.createNotificationChannel(this);
         setupDailyNotification()
 
         if (savedInstanceState == null) {
@@ -65,6 +54,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupBottomNavigation();
+        val testIntent = Intent(this, RecipeNotificationReceiver::class.java)
+        sendBroadcast(testIntent)
+
     }
 
     private fun setupDailyNotification() {
@@ -74,27 +66,29 @@ class MainActivity : AppCompatActivity() {
             this,
             0,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Устанавливаем на 10:00 утра
-        Calendar.getInstance().apply {
+        val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
             set(Calendar.HOUR_OF_DAY, 10)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
 
             if (timeInMillis < System.currentTimeMillis()) {
-                add(Calendar.DAY_OF_YEAR, 1)
+                add(Calendar.DATE, 1)
             }
-
-            alarmManager.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                timeInMillis,
-                AlarmManager.INTERVAL_DAY,
-                pendingIntent
-            )
         }
+
+        alarmManager.cancel(pendingIntent)
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
     }
 
     override fun onRequestPermissionsResult(

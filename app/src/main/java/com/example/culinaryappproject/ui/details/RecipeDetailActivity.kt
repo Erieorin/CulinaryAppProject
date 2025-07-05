@@ -7,6 +7,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -23,6 +24,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.example.culinaryappproject.models.FirestoreRepository
 import com.example.culinaryappproject.models.Recipe
 import com.example.culinaryappproject.models.Review
+import com.example.culinaryappproject.ui.cooking.StepStageActivity
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -34,6 +36,8 @@ class RecipeDetailActivity : AppCompatActivity() {
 
     private lateinit var instructionsContainer: LinearLayout
     private lateinit var reviewsContainer: LinearLayout
+
+    private lateinit var currentRecipe: Recipe
 
 
 
@@ -64,6 +68,13 @@ class RecipeDetailActivity : AppCompatActivity() {
             }
 
             bindRecipeData(recipe)
+
+            findViewById<TextView>(R.id.cookButton).setOnClickListener {
+                val intent = Intent(this, StepStageActivity::class.java)
+                intent.putExtra("recipe", recipe)
+                startActivity(intent)
+            }
+
 
             // теперь вызываем getReviews после получения recipe
             FirestoreRepository.getReviewsWithUserNames(recipe.id) { reviewsWithUsers ->
@@ -142,8 +153,6 @@ class RecipeDetailActivity : AppCompatActivity() {
                 }
             }
         }
-
-
         val backButton = findViewById<TextView>(R.id.backButton)
         backButton.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()

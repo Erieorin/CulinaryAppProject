@@ -158,24 +158,23 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="12dp" />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/cookButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="#6D3A34"
+                android:fontFamily="@font/opensans_semibold"
+                android:letterSpacing="0.0"
+                android:padding="12dp"
+                android:text="Приготовить"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
         </LinearLayout>
     </ScrollView>
-
-    <Button
-        android:id="@+id/cookButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/bottom_nav"
-        android:fontFamily="@font/opensans_semibold"
-        android:letterSpacing="0.0"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:backgroundTint="#6D3A34"
-        android:text="Приготовить"
-        android:textAllCaps="false"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:padding="12dp"/>
 
 </RelativeLayout>
